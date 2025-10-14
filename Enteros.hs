@@ -3,7 +3,7 @@
 
 {-
 FUNDAMENTOS DE COMPUTACIÓN
-ENTREGABLE: NÚMEROS ENTEROS
+ENTREGABLE: NÚMEROS ENTEROS puedeserpa
 
 Integrantes del equipo:
 Nombre 1: Marcos Coszion  Nro Est: 332945
