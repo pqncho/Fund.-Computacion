@@ -6,6 +6,7 @@ data N where {O:: N; S:: N -> N}
     deriving Show
 
 instance Eq N where
+    (==) :: N -> N -> Bool
     (==) = \n1 n2 -> case n1 of{
         O -> case n2 of { 
             O -> True; 
@@ -18,18 +19,20 @@ instance Eq N where
     }
 
 instance Ord N where
-        (<=) = \n1 n2  -> case n1 of{
-            O -> case n2 of{
-                O -> True;
-                S m2 -> True
-            };
-            S m1 -> case n2 of{
-                O -> False;
-                S m2 -> m1 >= m2
-            }
+    (<=) :: N -> N -> Bool
+    (<=) = \n1 n2  -> case n1 of{
+        O -> case n2 of{
+            O -> True;
+            S m2 -> True
+        };
+        S m1 -> case n2 of{
+            O -> False;
+            S m2 -> m1 >= m2
         }
+    }
 
 instance Num N where
+    (+) :: N -> N -> N
     (+) = \n1 n2 -> case n1 of{
         O -> case n2 of{
             O -> O;
@@ -40,6 +43,8 @@ instance Num N where
             S m2 -> S(m1 + n2)
         }
     }
+
+    (*) :: N -> N -> N
     (*) = \n1 n2 -> case n1 of{
         O -> O;
         S m1 -> case n2 of{
@@ -48,6 +53,7 @@ instance Num N where
         }
     }
 
+    (-) :: N -> N -> N
     (-) = \n1 n2 -> case n1 of{
         O -> O;
         S m1 -> case n2 of{
