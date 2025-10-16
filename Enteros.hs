@@ -41,34 +41,6 @@ instance Eq Signo where
 -- CUIDADO: E Pos O y E Neg O ambos representan el cero
 --------------------------------------------------------------------------------
 instance Eq Entero where
-    {- (==) =  \n1 n2 -> case n1 of{
-        E Pos O -> case n2 of{
-            E Pos O -> True;
-            E Neg O -> True;
-            E Pos (S n) -> False;
-            E Neg (S n) -> False;
-        };
-        E Neg O -> case n2 of{
-            E Pos O -> True;
-            E Neg O -> True;
-            E Pos (S n) -> False;
-            E Neg (S n) -> False;
-        };
-        E Pos (S n) -> case n2 of{
-            E Pos O -> False;
-            E Neg O -> False;
-            E Pos (S m) -> n == m;
-            E Neg (S m) -> False; 
-        };
-        E Neg (S n) -> case n2 of{
-            E Pos O -> False;
-            E Neg O -> False;
-            E Neg (S m) -> n == m;
-            E Pos (S m) -> False;
-        };
-    } 
-    -}
-
     (==) = \n1 n2 -> case n1 of{
         E s1 m1 -> case n2 of{
             E s2 m2 -> case (m1 == O, m2 == O) of{
@@ -163,9 +135,6 @@ instance Num Entero where
             E Neg (S m) -> case (n>m) of{
                 True -> E Pos ((S n) - (S m));
                 False -> E Neg ((S m) - (S n));
-    
-                --(S n) <= (S m) && (S n) != (S m) -> E Neg ((S m) - (S n)); 
-                --(S m) <= (S n) && (S n) != (S m) -> E Pos ((S n) - (S m));
             };
         };
         E Neg (S n) -> case n2 of{
