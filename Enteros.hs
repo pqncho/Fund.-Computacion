@@ -55,6 +55,24 @@ instance Eq Entero where
         };
     }
 
+    (==) = \n1 n2 -> case n1 of{
+        E s1 m1 -> case n2 of{
+            E s2 m2 -> case (m1 == O) of{
+                True -> case (m2 == O) of{
+                    True -> True;
+                    False -> False;
+                };
+                False -> case (m2 == O) of{
+                    True -> False;
+                    False -> case (s1 == s2) of{
+                        True -> m1 == m2;
+                        False -> False;
+                    };
+                };
+            };
+        };
+    }
+
 --------------------------------------------------------------------------------
 -- EJERCICIO 3: Instancia de Ord para Signo
 -- Se pide: Neg < Pos
