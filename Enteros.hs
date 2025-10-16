@@ -25,7 +25,6 @@ data Entero where { E :: Signo -> N -> Entero }
 -- EJERCICIO 1: Instancia de Eq para Signo
 --------------------------------------------------------------------------------
 instance Eq Signo where
-    (==) :: Signo -> Signo -> Bool
     (==) = \n1 n2 -> case n1 of{
         Pos -> case n2 of{
             Pos -> True;
@@ -42,8 +41,7 @@ instance Eq Signo where
 -- CUIDADO: E Pos O y E Neg O ambos representan el cero
 --------------------------------------------------------------------------------
 instance Eq Entero where
-    (==) :: Entero -> Entero -> Bool
-    (==) =  \n1 n2 -> case n1 of{
+    {- (==) =  \n1 n2 -> case n1 of{
         E Pos O -> case n2 of{
             E Pos O -> True;
             E Neg O -> True;
@@ -68,6 +66,21 @@ instance Eq Entero where
             E Neg (S m) -> n == m;
             E Pos (S m) -> False;
         };
+    } 
+    -}
+
+    (==) = \n1 n2 -> case n1 of{
+        E s1 m1 -> case n2 of{
+            E s2 m2 -> case (m1 == O, m2 == O) of{
+                (True, True) -> True;
+                (True, False) -> False;
+                (False, True) -> False;
+                (False, False) -> case (s1 == s2) of{
+                    True -> m1 == m2;
+                    False -> False;
+                };
+            };
+        };
     }
 
 --------------------------------------------------------------------------------
@@ -75,7 +88,6 @@ instance Eq Entero where
 -- Se pide: Neg < Pos
 --------------------------------------------------------------------------------
 instance Ord Signo where
-    (<=) :: Signo -> Signo -> Bool
     (<=) = \n1 n2 -> case n1 of{
         Pos -> case n2 of{
             Pos -> True;
@@ -96,7 +108,6 @@ instance Ord Signo where
 -- CUIDADO: E Pos O y E Neg O ambos representan el cero
 --------------------------------------------------------------------------------
 instance Ord Entero where
-    (<=) :: Entero -> Entero -> Bool
     (<=) = \n1 n2 -> case n1 of{ 
         E Pos O -> case n2 of{
             E Pos O -> True;
@@ -132,7 +143,6 @@ instance Ord Entero where
 -- Cuando una operación da como resultado cero, se puede devolver E Pos O o E Neg O indistintamente
 --------------------------------------------------------------------------------
 instance Num Entero where
-    (+) :: Entero -> Entero -> Entero
     (+) = \n1 n2 -> case n1 of{
         E Pos O -> case n2 of{
             E Pos O -> E Pos O;
@@ -151,10 +161,9 @@ instance Num Entero where
             E Neg O -> E Pos (S n);
             E Pos (S m) -> E Pos ((S m) + (S n));
             E Neg (S m) -> case (n>m) of{
-                True -> 
-                False -> 
-                
-                
+                True -> E Pos ((S n) - (S m));
+                False -> E Neg ((S m) - (S n));
+    
                 --(S n) <= (S m) && (S n) != (S m) -> E Neg ((S m) - (S n)); 
                 --(S m) <= (S n) && (S n) != (S m) -> E Pos ((S n) - (S m));
             };
@@ -163,26 +172,69 @@ instance Num Entero where
             E Pos O -> E Neg (S n);  
             E Neg O -> E Neg (S n);
             E Neg (S m) -> E Neg ((S n) + (S m)); 
-            E Pos (S m) -> case m of{
-                ()
+            E Pos (S m) -> case (m>n) of{
+                True -> E Pos ((S m) - (S n));
+                False -> E Neg ((S n) - (S m));
             }
         };
-
     }
-        
 
+    (*) = \n1 n2 -> case n1 of{
+        E Pos O -> case n2 of{
+            E Pos O -> E Pos O;
+            E Neg O -> E Pos O;
+            E Pos (S n) -> E Pos O;
+            E Neg (S n) -> E Neg O;
+        };
+        E Neg O -> case n2 of{
+            E Pos O -> E Pos O;
+            E Neg O -> E Pos O;
+            E Pos (S n) -> E Pos O;
+            E Neg (S n) -> E Pos O;
+        };
+        E Pos (S n) -> case n2 of{
+            E Pos O -> E Pos O;
+            E Neg O -> E Pos O;
+            E Pos (S m) -> E Pos ((S n) * (S m));
+            E Neg (S m) -> E Neg ((S n) * (S m));
+        };
+        E Neg (S n) -> case n2 of{
+            E Pos O -> E Pos O;
+            E Neg O -> E Pos O;
+            E Pos (S m) -> E Neg ((S n) * (S m));
+            E Neg (S m) -> E Pos ((S n) * (S m));
+        };
+    }
 
-
-
-
-
-
-
-
-    (*) = 
-    (-) = 
-    
-
-
-
-    
+    (-) = \n1 n2 ->case n1 of{
+        E Pos O -> case n2 of{
+            E Pos O -> E Pos O;
+            E Neg O -> E Pos O;
+            E Pos (S m) -> E Neg (S m);
+            E Neg (S m) -> E Pos (S m);
+        };
+        E Neg O -> case n2 of{
+            E Pos O -> E Pos O;
+            E Neg O -> E Pos O;
+            E Pos (S m) -> E Neg (S m);
+            E Neg (S m) -> E Pos (S m);
+        };
+        E Pos (S n) -> case n2 of{
+            E Pos O -> E Pos (S n);
+            E Neg O -> E Pos (S n);
+            E Pos (S m) -> case (n > m) of{
+                True -> E Pos ((S n) - (S m));
+                False -> E Neg ((S m) - (S n));
+            };
+            E Neg (S m) -> E Pos ((S n) + (S m));
+        };
+        E Neg (S n) -> case n2 of{
+            E Pos O -> E Neg (S n);
+            E Neg O -> E Neg (S n);
+            E Pos (S m) -> E Neg ((S n) + (S m));
+            E Neg (S m) -> case (m>n) of{
+                True -> E Pos ((S m) - (S n));
+                False -> E Neg ((S n) - (S m));
+            };
+        };
+    }
